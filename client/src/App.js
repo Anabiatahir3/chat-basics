@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io.connect('http://localhost:3000');
+const socket = io.connect('http://localhost:8000');
 
 const App = () => {
   const [messageInput, setMessageInput] = useState('');
@@ -26,7 +26,7 @@ const App = () => {
       setMessages((prevMessages) => [...prevMessages, data.text]);
     });
     socket.emit('findAllMessages', (data) => {
-      setMessages((prevMessages) => [...prevMessages, ...data.map((element) => element.text)]);
+      setMessages((prevMessages) => [...prevMessages, ...data.map((element) =>  `${element.name}: ${element.text}`)]);
       //setMessages([data.map((element) => element.text)])
     });
 

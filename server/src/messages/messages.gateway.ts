@@ -32,7 +32,7 @@ onModuleInit() {
   @SubscribeMessage('findAllMessages')
   async findAll() {
     const messages=await this.messagesService.findAll();
-    console.log(messages)
+    //console.log(messages)
     return messages
    
   }
