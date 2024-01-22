@@ -1,6 +1,7 @@
 import {Entity,PrimaryGeneratedColumn,Column} from 'typeorm';
 
 
+
 @Entity()
 export class Message {
     @PrimaryGeneratedColumn()
@@ -11,4 +12,10 @@ export class Message {
 
     @Column()
     text:string;
+
+    @Column()
+    room:string
+
+    @Column()
+    createdAt:Date
 }

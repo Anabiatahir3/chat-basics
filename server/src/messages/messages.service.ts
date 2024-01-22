@@ -12,21 +12,13 @@ export class MessagesService {
     ){}
     clientToUser={}
   
-  addMessage(createMessageDto: CreateMessageDto) {
+addMessage(createMessageDto: CreateMessageDto) {
     const msg=this.messageRepository.create(createMessageDto)
     return this.messageRepository.save(msg)
   }
 
-  findAll() {
-    return this.messageRepository.find()
+findAll(room:string) {
+    return this.messageRepository.findBy({room})
   }
-identify(name:string,id:string){
-  this.clientToUser[id]=name;
-  return Object.values(this.clientToUser)
-}
-getClientName(id:string){
-  return this.clientToUser[id]
-}
 
- 
 }
