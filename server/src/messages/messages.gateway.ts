@@ -13,10 +13,15 @@ export class MessagesGateway {
   @WebSocketServer()
   server:Server;
 onModuleInit() {
-    this.server.on("connection",(socket)=>{
+    this.server.on("connection",socket=>{
         console.log(socket.id)
-        console.log('connected')
-        return socket.id
+        socket.emit('message',"welcome")
+        socket.broadcast.emit('message', 'A user has joined')
+        socket.on('disconnect',()=>{
+          this.server.emit("message","A user has left the chat")
+
+        })
+        
     })
     
 }
@@ -29,16 +34,17 @@ onModuleInit() {
     return message;
   }
 
+//   @SubscribeMessage('newJoin')
+//   newUser(client:Socket,data:any){
+// this.server.emit("message",data.msg)
+//   }
+
   @SubscribeMessage('findAllMessages')
-  async findAll() {
-    const messages=await this.messagesService.findAll();
+  async findAll(client:Socket, data:any) {
+    const messages=await this.messagesService.findAll(data.room);
     //console.log(messages)
     return messages
    
   }
 
-@SubscribeMessage('join')
-identify(@MessageBody('name')name:string, @ConnectedSocket() client:Socket){
-  return this.messagesService.identify(name,client.id)
-}
 }

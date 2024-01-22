@@ -1,60 +1,36 @@
-
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Form from './components/Form.js';
+import Room from './components/Room.js';
 
 const socket = io.connect('http://localhost:8000');
 
 const App = () => {
-  const [messageInput, setMessageInput] = useState('');
-  const [messages, setMessages] = useState([]);
+  // Lift state up to the App component
+  const [room, setRoom] = useState('');
+  const [username, setUsername] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    socket.emit('createMessage', { text: messageInput, name: 'Anabia' });
-    setMessageInput('');
+  const handleFormSubmit = (enteredRoom, enteredUsername) => {
+    // Set the state when the form is submitted
+    setRoom(enteredRoom);
+    setUsername(enteredUsername);
   };
 
-  useEffect(() => {
-    socket.on('connection', (data) => {
-      console.log(data.id);
-      console.log('connected');
-    });
-
-    socket.on('message', (data) => {
-      console.log('message received');
-      console.log(data.text);
-      setMessages((prevMessages) => [...prevMessages, data.text]);
-    });
-    socket.emit('findAllMessages', (data) => {
-      setMessages((prevMessages) => [...prevMessages, ...data.map((element) =>  `${element.name}: ${element.text}`)]);
-      //setMessages([data.map((element) => element.text)])
-    });
-
-    return () => {
-      socket.off('connection');
-      socket.off('message');
-    };
-  }, []);
-
- 
   return (
-    <div>
-      <input
-        type="text"
-        value={messageInput}
-        onChange={(e) => {
-          setMessageInput(e.target.value);
-        }}
-      />
-      <button onClick={handleSubmit}>Submit</button>
-      <div>
-        {messages.map((message, index) => (
-          <div key={index}>{message}</div>
-        ))}
-      </div>
+    <div className="App">
+      <Routes>
+        <Route
+          path="/"
+          element={<Form onSubmit={handleFormSubmit} />} // Pass onSubmit callback
+        />
+        <Route
+          path={`/username=${username}`}
+          element={<Room room={room} username={username} />} // Pass room and username as props
+        />
+      </Routes>
     </div>
   );
 };
 
 export default App;
-
